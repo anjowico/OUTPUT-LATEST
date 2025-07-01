@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confetti Celebration with Score</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc); /* Beautiful gradient background */
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .button {
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #06d6a0;
+            color: white;
+            border: none;
+            border-radius: 50px; /* Round button for a modern look */
+            cursor: pointer;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+            transition: background-color 0.3s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .button:hover {
+            background-color: #05b38c;
+            transform: translateY(-4px); /* Slight lift effect */
+        }
+
+        .score {
+            margin-top: 20px;
+            font-size: 36px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .score.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .confetti.active {
+            opacity: 1;
+        }
+
+        .confetti span {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: fall 2s ease-out infinite, sparkle 1.5s ease-in-out infinite;
+        }
+
+        /* Random fall animation for confetti */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Confetti sparkle effect */
+        @keyframes sparkle {
+            0% { box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.6); }
+            100% { box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="button" onclick="showScoreAndConfetti()">Click to Show Score</button>
+    <div class="score" id="score">Your score is: 10</div>
+
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        let score = 10; // Starting score
+
+        function showScoreAndConfetti() {
+            // Increment score by 10 each time
+            score += 10;
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `Your score is: ${score}`;
+
+            // Add show class to score for smooth transition
+            scoreElement.classList.add('show');
+            
+            // Trigger confetti
+            const confettiElement = document.getElementById('confetti');
+            confettiElement.classList.add('active'); // Activate the confetti effect
+
+            // Play celebration sound
+            const audio = new Audio('https://www.soundjay.com/button/beep-07.wav');
+            audio.play();
+
+            // Generate random confetti pieces
+            for (let i = 0; i < 60; i++) {  // Increased number of confetti pieces
+                const confettiPiece = document.createElement('span');
+                const randomLeft = Math.random() * 100;
+                const randomDelay = Math.random() * 2; // Random delay for falling
+                const randomRotation = Math.random() * 360; // Random rotation for added flair
+                const randomColor = `hsl(${Math.random() * 360}, 100%, 50%)`; // Random colors for each confetti
+
+                confettiPiece.style.left = `${randomLeft}vw`;
+                confettiPiece.style.animationDelay = `${randomDelay}s`;
+                confettiPiece.style.animationDuration = `${2 + Math.random() * 1}s`;  // Randomize speed of fall
+                confettiPiece.style.transform = `rotate(${randomRotation}deg)`;
+                confettiPiece.style.backgroundColor = randomColor;
+
+                confettiElement.appendChild(confettiPiece);
+            }
+
+            // Automatically remove confetti after animation ends
+            setTimeout(() => {
+                confettiElement.classList.remove('active');
+                confettiElement.innerHTML = '';  // Remove confetti pieces
+            }, 2500);  // Confetti duration
+        }
+    </script>
+
+</body>
+</html>

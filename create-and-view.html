@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher - Create and Save Assessments</title>
+    <style>
+        /* Add styles similar to the ones in your previous code */
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+            background: linear-gradient(to right, #ffafbd, #ffc3a0); /* Gradient background */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00796b;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #004d40;
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 30px;
+            text-align: center; /* Center form elements */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: border 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: #00796b;
+            outline: none;
+        }
+
+        .button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #004d40;
+        }
+
+        .button:active {
+            background-color: #00332f;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            color: #00796b;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .saved-assessments ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .saved-assessments li {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-left: 5px solid #00796b;
+        }
+
+        .saved-assessments li p {
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                width: 90%;
+            }
+
+            .button {
+                font-size: 1.1em;
+            }
+
+            .saved-assessments li {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Teacher - Create and Save Assessments</h1>
+
+    <!-- Jumbled Words Assessment -->
+    <div class="container">
+        <h2>Jumbled Words Assessment</h2>
+        <form id="jumbledWordsForm">
+            <label for="wordToJumble">Enter a word to jumble:</label>
+            <input type="text" id="wordToJumble" placeholder="Enter word" required>
+            <button type="button" onclick="addJumbledWord()">Add</button>
+        </form>
+        <div id="jumbledWordsList"></div>
+    </div>
+
+    <!-- Vocabulary Terms -->
+    <div class="container">
+        <h2>Vocabulary Terms Assessment</h2>
+        <form id="definitionForm">
+            <label for="termWord">Enter a term:</label>
+            <input type="text" id="termWord" placeholder="Enter term" required>
+            <button type="button" onclick="addTerm()">Add</button>
+        </form>
+        <div id="termsList"></div>
+    </div>
+
+    <!-- Fill in the Blank Activity -->
+    <div class="container">
+        <h2>Create a Fill-in-the-Blank Question</h2>
+        <form id="createFillInBlankForm">
+            <label for="blankSentence">Enter a sentence with a blank (use __ for the blank):</label>
+            <textarea id="blankSentence" placeholder="Example: He was feeling very __ after his long walk." required></textarea>
+            <label for="blankAnswer">Correct Answer:</label>
+            <input type="text" id="blankAnswer" placeholder="e.g., tired" required>
+            <button type="button" onclick="addFillInBlank()">Add</button>
+        </form>
+        <div id="blankQuestionsList"></div>
+    </div>
+
+    <!-- Multiple Choice Questions -->
+    <div class="container">
+        <h2>Create a Multiple Choice Question</h2>
+        <form id="createMCQForm">
+            <label for="mcqQuestion">Question:</label>
+            <textarea id="mcqQuestion" required></textarea>
+            <label for="optionA">Option A:</label>
+            <input type="text" id="optionA" required>
+            <label for="optionB">Option B:</label>
+            <input type="text" id="optionB" required>
+            <label for="optionC">Option C:</label>
+            <input type="text" id="optionC" required>
+            <label for="optionD">Option D:</label>
+            <input type="text" id="optionD" required>
+            <label for="correctOption">Correct Option:</label>
+            <select id="correctOption" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+            <button type="button" onclick="addMCQ()">Add</button>
+        </form>
+        <div id="mcqList"></div>
+    </div>
+
+    <!-- Classroom Code & Save All Assessments -->
+    <form id="classroomCodeForm">
+        <label for="classroomCode">Enter Classroom Code:</label>
+        <input type="text" id="classroomCode" placeholder="Enter Classroom Code" required>
+    </form>
+
+    <div>
+        <button class="button" id="saveAllAssessments">Save All Assessments</button>
+        <hr>
+<h2>Manage Saved Classroom Assessments</h2>
+<div style="margin-top: 20px;">
+    <label for="lookupClassroomCode">Enter Classroom Code to View:</label>
+    <input type="text" id="lookupClassroomCode" placeholder="Enter code (e.g., ClassA123)" />
+    <button class="button" style="margin-top: 10px;" onclick="showAssessmentsByCode()">Show Assessments</button>
+</div>
+
+<div id="classroomAssessmentDisplay" style="margin-top: 30px;"></div>
+
+
+    </div>
+
+    <script>
+        // Define arrays to store assessments
+        let terms = [];
+        let fillInBlankQuestions = [];
+        let jumbledWords = [];
+        let mcqQuestions = [];
+
+        // Add new jumbled word
+        function addJumbledWord() {
+    const word = document.getElementById("wordToJumble").value.trim();
+    if (word) {
+        const jumbled = jumbleWord(word);
+        jumbledWords.push({ original: word, jumbled: jumbled });
+        document.getElementById("wordToJumble").value = "";
+        renderJumbledWords();
+    }
+}
+// Shuffling of words
+function jumbleWord(word) {
+    const letters = word.split('');
+    let jumbled = '';
+    do {
+        jumbled = letters.sort(() => Math.random() - 0.5).join('');
+    } while (jumbled === word); // Ensure it's not the same as original
+    return jumbled;
+}
+
+
+        // Remove jumbled word
+        function removeJumbledWord(index) {
+    jumbledWords.splice(index, 1);
+    renderJumbledWords();
+}
+
+function renderJumbledWords() {
+    const list = document.getElementById("jumbledWordsList");
+    list.innerHTML = jumbledWords.map((item, index) => `
+        <div class="saved-assessments">
+            <li>
+                <strong>Jumbled:</strong> ${item.jumbled} 
+                <br><em>(Original: ${item.original})</em>
+                <button onclick="removeJumbledWord(${index})">Remove</button>
+            </li>
+        </div>
+    `).join("");
+}
+
+        // Add new term
+        function addTerm() {
+            const term = document.getElementById("termWord").value.trim();
+            if (term) {
+                terms.push(term);
+                document.getElementById("termWord").value = "";
+                renderTerms();
+            }
+        }
+
+        // Remove term
+        function removeTerm(index) {
+            terms.splice(index, 1);
+            renderTerms();
+        }
+
+        // Render terms list
+        function renderTerms() {
+            const list = document.getElementById("termsList");
+            list.innerHTML = terms.map((term, index) => `
+                <div class="saved-assessments">
+                    <li>${term} <button onclick="removeTerm(${index})">Remove</button></li>
+                </div>
+            `).join("");
+        }
+
+        // Add new fill-in-the-blank question
+        function addFillInBlank() {
+            const sentence = document.getElementById("blankSentence").value.trim();
+            const answer = document.getElementById("blankAnswer").value.trim();
+
+            if (sentence && answer) {
+                fillInBlankQuestions.push({ sentence, answer });
+                document.getElementById("blankSentence").value = "";
+                document.getElementById("blankAnswer").value = "";
+                renderFillInBlankQuestions();
+            }
+        }
+
+        // Remove fill-in-the-blank question
+        function removeFillInBlank(index) {
+            fillInBlankQuestions.splice(index, 1);
+            renderFillInBlankQuestions();
+        }
+
+        // Render fill-in-the-blank questions list
+        function renderFillInBlankQuestions() {
+            const list = document.getElementById("blankQuestionsList");
+            list.innerHTML = fillInBlankQuestions.map((item, index) => `
+                <div class="saved-assessments">
+                    <li>
+                        ${item.sentence.replace("__", `<strong>__</strong>`)} 
+                        <br><em>Answer:</em> ${item.answer}
+                        <button onclick="removeFillInBlank(${index})">Remove</button>
+                    </li>
+                </div>
+            `).join("");
+        }
+
+        // Add new multiple choice question
+        function addMCQ() {
+            const question = document.getElementById("mcqQuestion").value.trim();
+            const optionA = document.getElementById("optionA").value.trim();
+            const optionB = document.getElementById("optionB").value.trim();
+            const optionC = document.getElementById("optionC").value.trim();
+            const optionD = document.getElementById("optionD").value.trim();
+            const correctOption = document.getElementById("correctOption").value;
+
+            if (question && optionA && optionB && optionC && optionD && correctOption) {
+                mcqQuestions.push({
+                    question,
+                    options: { A: optionA, B: optionB, C: optionC, D: optionD },
+                    correct: correctOption
+                });
+
+                document.getElementById("mcqQuestion").value = "";
+                document.getElementById("optionA").value = "";
+                document.getElementById("optionB").value = "";
+                document.getElementById("optionC").value = "";
+                document.getElementById("optionD").value = "";
+                document.getElementById("correctOption").value = "";
+
+                renderMCQs();
+            }
+        }
+
+        // Remove multiple choice question
+        function removeMCQ(index) {
+            mcqQuestions.splice(index, 1);
+            renderMCQs();
+        }
+
+        // Render multiple choice questions list
+        function renderMCQs() {
+            const list = document.getElementById("mcqList");
+            list.innerHTML = mcqQuestions.map((mcq, index) => `
+                <div class="saved-assessments">
+                    <li>
+                        <strong>${mcq.question}</strong><br>
+                        A: ${mcq.options.A}, B: ${mcq.options.B}, 
+                        C: ${mcq.options.C}, D: ${mcq.options.D}<br>
+                        <em>Correct: ${mcq.correct}</em>
+                        <button onclick="removeMCQ(${index})">Remove</button>
+                    </li>
+                </div>
+            `).join("");
+        }
+
+        // Save All Assessments to Local Storage
+        document.getElementById("saveAllAssessments").addEventListener("click", function () {
+    const classroomCode = document.getElementById("classroomCode").value.trim();
+    const feedback = document.getElementById("feedback") || document.createElement("div");
+
+    if (!classroomCode) {
+        feedback.textContent = "Please enter a classroom code!";
+        feedback.style.color = "red";
+        return;
+    }
+
+    const allData = {
+        terms,
+        jumbledWords,
+        fillInBlankQuestions,
+        mcqQuestions,
+        totalQuestions: jumbledWords.length + fillInBlankQuestions.length + mcqQuestions.length
+    };
+
+    const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+    allAssessments[classroomCode] = allData;
+    localStorage.setItem("allAssessments", JSON.stringify(allAssessments));
+
+    alert("Assessments saved successfully!");
+    window.location.reload(); // 🔁 Resets the page
+});
+
+        function renderSavedClassroomAssessments() {
+    const container = document.getElementById("allSavedAssessments");
+    const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+
+    if (Object.keys(allAssessments).length === 0) {
+        container.innerHTML = "<p>No saved classroom assessments found.</p>";
+        return;
+    }
+
+    container.innerHTML = Object.entries(allAssessments).map(([code, data]) => {
+        const termCount = data.terms?.length || 0;
+        const jumbledCount = data.jumbledWords?.length || 0;
+        const blankCount = data.fillInBlankQuestions?.length || 0;
+        const mcqCount = data.mcqQuestions?.length || 0;
+
+        return `
+            <div style="background:#fff; padding:15px; margin:10px 0; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                <strong>Classroom Code:</strong> ${code}<br>
+                <ul>
+                    <li>Terms: ${termCount}</li>
+                    <li>Jumbled Words: ${jumbledCount}</li>
+                    <li>Fill-in-the-Blank: ${blankCount}</li>
+                    <li>MCQs: ${mcqCount}</li>
+                </ul>
+                <button onclick="deleteClassroomAssessment('${code}')"
+                        style="background-color:#dc3545; color:#fff; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">
+                    Delete This Classroom
+                </button>
+            </div>
+        `;
+    }).join("");
+}
+
+function deleteClassroomAssessment(code) {
+    if (confirm(`Are you sure you want to delete classroom '${code}'? This action cannot be undone.`)) {
+        const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+        delete allAssessments[code];
+        localStorage.setItem("allAssessments", JSON.stringify(allAssessments));
+    }
+}
+function showAssessmentsByCode() {
+    const code = document.getElementById("lookupClassroomCode").value.trim();
+    const display = document.getElementById("classroomAssessmentDisplay");
+    display.innerHTML = "";
+
+    if (!code) {
+        display.innerHTML = "<p style='color: red;'>Please enter a classroom code.</p>";
+        return;
+    }
+
+    const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+    const data = allAssessments[code];
+
+    if (!data) {
+        display.innerHTML = `<p style='color: red;'>No assessments found for classroom code: <strong>${code}</strong></p>`;
+        return;
+    }
+
+    // Render editable form
+    display.innerHTML = `
+    <div style="background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0;">Editing Assessments for Classroom Code: ${code}</h3>
+            <button onclick="deleteClassroomAssessment('${code}')" 
+                style="background-color:#dc3545; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">
+                Delete Classroom
+            </button>
+        </div>
+        <hr style="margin: 15px 0;">
+        ...
+
+            <h4>Vocabulary Terms</h4>
+            <div id="edit-terms">${data.terms.map((term, i) => `
+                <input type="text" value="${term}" id="term-${i}" style="width: 100%; margin-bottom: 5px;">`).join("")}</div>
+
+            <h4>Jumbled Words</h4>
+            <div id="edit-jumbled">${data.jumbledWords.map((item, i) => `
+                <input type="text" value="${item.original}" id="jumbled-${i}" style="width: 100%; margin-bottom: 5px;">`).join("")}</div>
+
+            <h4>Fill-in-the-Blank Questions</h4>
+            <div id="edit-blanks">${data.fillInBlankQuestions.map((item, i) => `
+                <input type="text" value="${item.sentence}" id="blank-sentence-${i}" placeholder="Sentence (use __)" style="width: 100%; margin-bottom: 5px;">
+                <input type="text" value="${item.answer}" id="blank-answer-${i}" placeholder="Answer" style="width: 100%; margin-bottom: 10px;">`).join("")}</div>
+
+            <h4>Multiple Choice Questions</h4>
+            <div id="edit-mcqs">${data.mcqQuestions.map((mcq, i) => `
+                <input type="text" value="${mcq.question}" id="mcq-q-${i}" placeholder="Question" style="width: 100%; margin-bottom: 5px;">
+                <input type="text" value="${mcq.options.A}" id="mcq-${i}-A" placeholder="Option A" style="width: 49%; margin-bottom: 5px;">
+                <input type="text" value="${mcq.options.B}" id="mcq-${i}-B" placeholder="Option B" style="width: 49%; margin-bottom: 5px;"><br>
+                <input type="text" value="${mcq.options.C}" id="mcq-${i}-C" placeholder="Option C" style="width: 49%; margin-bottom: 5px;">
+                <input type="text" value="${mcq.options.D}" id="mcq-${i}-D" placeholder="Option D" style="width: 49%; margin-bottom: 5px;">
+                <select id="mcq-${i}-correct" style="width: 100%; margin-bottom: 15px;">
+                    <option value="A" ${mcq.correct === "A" ? "selected" : ""}>Correct: A</option>
+                    <option value="B" ${mcq.correct === "B" ? "selected" : ""}>Correct: B</option>
+                    <option value="C" ${mcq.correct === "C" ? "selected" : ""}>Correct: C</option>
+                    <option value="D" ${mcq.correct === "D" ? "selected" : ""}>Correct: D</option>
+                </select>
+            `).join("")}</div>
+
+            <button onclick="saveEditedAssessment('${code}')" style="margin-top: 15px; padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                Save Changes
+            </button>
+        </div>
+    `;
+}           
+function saveEditedAssessment(code) {
+    const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+    const original = allAssessments[code];
+
+    // Reconstruct updated data
+    const updatedTerms = original.terms.map((_, i) => document.getElementById(`term-${i}`).value.trim());
+    const updatedJumbled = original.jumbledWords.map((_, i) => {
+        const originalWord = document.getElementById(`jumbled-${i}`).value.trim();
+        return {
+            original: originalWord,
+            jumbled: jumbleWord(originalWord)
+        };
+    });
+    const updatedBlanks = original.fillInBlankQuestions.map((_, i) => ({
+        sentence: document.getElementById(`blank-sentence-${i}`).value.trim(),
+        answer: document.getElementById(`blank-answer-${i}`).value.trim()
+    }));
+    const updatedMCQs = original.mcqQuestions.map((_, i) => ({
+        question: document.getElementById(`mcq-q-${i}`).value.trim(),
+        options: {
+            A: document.getElementById(`mcq-${i}-A`).value.trim(),
+            B: document.getElementById(`mcq-${i}-B`).value.trim(),
+            C: document.getElementById(`mcq-${i}-C`).value.trim(),
+            D: document.getElementById(`mcq-${i}-D`).value.trim()
+        },
+        correct: document.getElementById(`mcq-${i}-correct`).value
+    }));
+
+    allAssessments[code] = {
+        terms: updatedTerms,
+        jumbledWords: updatedJumbled,
+        fillInBlankQuestions: updatedBlanks,
+        mcqQuestions: updatedMCQs,
+        totalQuestions: updatedJumbled.length + updatedBlanks.length + updatedMCQs.length
+    };
+
+    localStorage.setItem("allAssessments", JSON.stringify(allAssessments));
+    alert("Assessment updated!");
+    showAssessmentsByCode(); // Refresh the editable view
+}
+
+function deleteClassroomAssessment(code) {
+    if (confirm(`Are you sure you want to delete all assessments for classroom '${code}'?`)) {
+        const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+        delete allAssessments[code];
+        localStorage.setItem("allAssessments", JSON.stringify(allAssessments));
+        document.getElementById("classroomAssessmentDisplay").innerHTML =
+            `<p style='color: red;'>Assessments for classroom <strong>${code}</strong> have been deleted.</p>`;
+    }
+}
+
+    </script>
+
+</body>
+</html>

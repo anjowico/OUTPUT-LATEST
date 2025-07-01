@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Quiz - Interactive Assessment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f2f6fc, #e6efff);
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .assessment {
+      margin: 0 auto 40px auto;
+      max-width: 900px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .activity {
+      margin-top: 20px;
+    }
+
+    .question-card {
+      background-color: #fdfdfd;
+      border-left: 6px solid #007bff;
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+
+    .question-card:hover {
+      transform: scale(1.01);
+    }
+
+    .question-card p {
+      font-weight: bold;
+      color: #444;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    .feedback.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .feedback.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .highlight-correct {
+      background-color: #e2f0cb;
+      font-weight: bold;
+    }
+
+    .summary {
+      background-color: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Knowledge Quest</h1>
+  <h2>Choose the best answer. Learn something new every time! 💡</h2>
+
+    <!-- MULTIPLE CHOICE: The Rescued Pet -->
+    <div class="activity">
+        <h3>The Rescued Pet</h3>
+    
+        <p>1. What is one of the key advantages of adopting a pet from the pound, according to the passage?</p>
+        <div>
+            <label><input type="radio" name="q1Pet" value="a"> A) The pets are always already house-trained.</label><br>
+            <label><input type="radio" name="q1Pet" value="b"> B) Pets from the pound come with a lifetime of supplies.</label><br>
+            <label><input type="radio" name="q1Pet" value="c"> C) Adopting a pet costs significantly less than buying from a pet store.</label><br>
+            <label><input type="radio" name="q1Pet" value="d"> D) Pets from the pound are guaranteed to be healthier than those from stores.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q1Pet', 'c', 'q1PetFeedback', 'Pet Q1')">Submit</button>
+        <div id="q1PetFeedback" class="feedback"></div>
+    
+        <p>2. Which responsibility does the passage say a child must take on when adopting a pet?</p>
+        <div>
+            <label><input type="radio" name="q2Pet" value="a"> A) Training the pet to perform tricks.</label><br>
+            <label><input type="radio" name="q2Pet" value="b"> B) Socializing the pet with other animals.</label><br>
+            <label><input type="radio" name="q2Pet" value="c"> C) Feeding, cleaning, and exercising the pet.</label><br>
+            <label><input type="radio" name="q2Pet" value="d"> D) Creating a social media account for the pet.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q2Pet', 'c', 'q2PetFeedback', 'Pet Q2')">Submit</button>
+        <div id="q2PetFeedback" class="feedback"></div>
+    
+        <p>3. What emotional benefit does adopting a pet from the pound provide to a child?</p>
+        <div>
+            <label><input type="radio" name="q3Pet" value="a"> A) It helps them feel responsible but also stressed.</label><br>
+            <label><input type="radio" name="q3Pet" value="b"> B) It teaches them how to manage large amounts of money.</label><br>
+            <label><input type="radio" name="q3Pet" value="c"> C) It makes them feel proud to give an abandoned animal a second chance.</label><br>
+            <label><input type="radio" name="q3Pet" value="d"> D) It allows them to immediately bond with the pet as a perfect companion.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q3Pet', 'c', 'q3PetFeedback', 'Pet Q3')">Submit</button>
+        <div id="q3PetFeedback" class="feedback"></div>
+    
+        <p>4. What type of animals does the passage suggest adopting from the pound?</p>
+        <div>
+            <label><input type="radio" name="q4Pet" value="a"> A) Only large pets, like horses and goats.</label><br>
+            <label><input type="radio" name="q4Pet" value="b"> B) Only small pets, such as hamsters and birds.</label><br>
+            <label><input type="radio" name="q4Pet" value="c"> C) >Mainly exotic pets, such as reptiles and tropical fish.</label><br>
+            <label><input type="radio" name="q4Pet" value="d"> D) Dogs and cats, which can provide emotional support and protection.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q4Pet', 'd', 'q4PetFeedback', 'Pet Q4')">Submit</button>
+        <div id="q4PetFeedback" class="feedback"></div>
+    
+        <p>5. How can a pet like a dog or cat help a person who is living alone, according to the passage?</p>
+        <div>
+            <label><input type="radio" name="q5Pet" value="a"> A) They increase social media followers.</label><br>
+            <label><input type="radio" name="q5Pet" value="b"> B) They provide a source of entertainment.</label><br>
+            <label><input type="radio" name="q5Pet" value="c"> C) They allow the person to make new friends in the neighborhood.</label><br>
+            <label><input type="radio" name="q5Pet" value="d"> D) They give protection and companionship, and can help ease loneliness.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q5Pet', 'd', 'q5PetFeedback', 'Pet Q5')">Submit</button>
+        <div id="q5PetFeedback" class="feedback"></div>
+    </div>
+
+<!-- SCORE SUMMARY BUTTON -->
+<div style="margin-top: 30px;">
+    <button class="button" onclick="showFinalScore()">Show Final Score</button>
+    <div id="scoreSummary" class="feedback summary"></div>
+</div>
+
+<!-- JAVASCRIPT FUNCTIONALITY -->
+<script>
+function checkMultipleChoice(questionName, correctAnswer, feedbackId, assessmentLabel) {
+    const options = document.getElementsByName(questionName);
+    let selectedValue = '';
+    let selectedOption = null;
+
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].checked) {
+            selectedValue = options[i].value;
+            selectedOption = options[i];
+            break;
+        }
+    }
+
+    const feedbackElement = document.getElementById(feedbackId);
+    if (!selectedValue) {
+        showFeedback(feedbackElement, '❗ Please select an answer.', 'error');
+        return;
+    }
+
+    // Disable all options after selection
+    options.forEach(opt => opt.disabled = true);
+
+    if (selectedValue === correctAnswer) {
+        showFeedback(feedbackElement, '✅ Correct!', 'success');
+        saveAssessmentResult(assessmentLabel, 1);
+    } else {
+        showFeedback(feedbackElement, `❌ Incorrect. The correct answer was: ${correctAnswer.toUpperCase()}`, 'error');
+        highlightCorrectOption(questionName, correctAnswer);
+        saveAssessmentResult(assessmentLabel, 0);
+    }
+}
+
+function showFeedback(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block';
+    element.style.padding = '10px';
+    element.style.borderRadius = '5px';
+    element.style.transition = 'all 0.3s ease';
+
+    if (type === 'success') {
+        element.style.backgroundColor = '#d4edda';
+        element.style.color = '#155724';
+    } else {
+        element.style.backgroundColor = '#f8d7da';
+        element.style.color = '#721c24';
+    }
+}
+
+function highlightCorrectOption(questionName, correctValue) {
+    const options = document.getElementsByName(questionName);
+    options.forEach(opt => {
+        if (opt.value === correctValue) {
+            opt.parentElement.classList.add('highlight-correct');
+        }
+    });
+}
+
+function saveAssessmentResult(assessment, result) {
+    let results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    results.push({ assessment: assessment, result: result });
+    localStorage.setItem('assessmentResults', JSON.stringify(results));
+}
+
+function showFinalScore() {
+    const results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    const total = results.length;
+    const correct = results.filter(r => r.result === 1).length;
+    const summaryText = total > 0 
+        ? `📊 You answered ${correct} out of ${total} questions correctly.` 
+        : '📝 No questions have been answered yet.';
+    
+    const feedback = document.getElementById('scoreSummary');
+    showFeedback(feedback, summaryText, correct / total >= 0.7 ? 'success' : 'error');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Quiz - Interactive Assessment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f2f6fc, #e6efff);
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .assessment {
+      margin: 0 auto 40px auto;
+      max-width: 900px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .activity {
+      margin-top: 20px;
+    }
+
+    .question-card {
+      background-color: #fdfdfd;
+      border-left: 6px solid #007bff;
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+
+    .question-card:hover {
+      transform: scale(1.01);
+    }
+
+    .question-card p {
+      font-weight: bold;
+      color: #444;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    .feedback.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .feedback.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .highlight-correct {
+      background-color: #e2f0cb;
+      font-weight: bold;
+    }
+
+    .summary {
+      background-color: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Knowledge Quest</h1>
+  <h2>Choose the best answer. Learn something new every time! 💡</h2>
+
+<!-- MULTIPLE CHOICE: The Stonecutter -->
+<div class="assessment">
+    <h3>The Stonecutter</h3>
+
+    <div class="activity">
+        <h3>The Stonecutter</h3>
+    
+        <p>1. What does the stonecutter initially desire most in life?</p>
+        <div>
+            <label><input type="radio" name="q1Stonecutter" value="a"> A) To gain the admiration of others.</label><br>
+            <label><input type="radio" name="q1Stonecutter" value="b"> B) To become wealthy and influential.</label><br>
+            <label><input type="radio" name="q1Stonecutter" value="c"> C) To experience the power of the sun.</label><br>
+            <label><input type="radio" name="q1Stonecutter" value="d"> D) To be free from all responsibilities.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q1Stonecutter', 'b', 'q1StonecutterFeedback', 'Stonecutter Q1')">Submit</button>
+        <div id="q1StonecutterFeedback" class="feedback"></div>
+    
+        <p>2. How does the stonecutter's perspective on power change throughout the story?</p>
+        <div>
+            <label><input type="radio" name="q2Stonecutter" value="a"> A) He comes to realize that true power is found in owning property.</label><br>
+            <label><input type="radio" name="q2Stonecutter" value="b"> B) He decides that only people in government positions have real power.</label><br>
+            <label><input type="radio" name="q2Stonecutter" value="c"> C) He learns that no form of power is absolute, and each has its own limitations.</label><br>
+            <label><input type="radio" name="q2Stonecutter" value="d"> D) He grows more content with his original position and never wants to change again.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q2Stonecutter', 'c', 'q2StonecutterFeedback', 'Stonecutter Q2')">Submit</button>
+        <div id="q2StonecutterFeedback" class="feedback"></div>
+    
+        <p>3. What does the stonecutter eventually realize at the end of the story?</p>
+        <div>
+            <label><input type="radio" name="q3Stonecutter" value="a"> A) Power is irrelevant when compared to wealth.</label><br>
+            <label><input type="radio" name="q3Stonecutter" value="b"> B) The sun is the most powerful force in the world.</label><br>
+            <label><input type="radio" name="q3Stonecutter" value="c"> C) Being a stonecutter was the most powerful position after all.</label><br>
+            <label><input type="radio" name="q3Stonecutter" value="d"> D) He should have remained a high official to maintain his status.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q3Stonecutter', 'c', 'q3StonecutterFeedback', 'Stonecutter Q3')">Submit</button>
+        <div id="q3StonecutterFeedback" class="feedback"></div>
+    
+        <p>4. What was the stonecutter's final transformation?</p>
+        <div>
+            <label><input type="radio" name="q4Stonecutter" value="a"> A) The sun</label><br>
+            <label><input type="radio" name="q4Stonecutter" value="b"> B) A cloud</label><br>
+            <label><input type="radio" name="q4Stonecutter" value="c"> C) A stone</label><br>
+            <label><input type="radio" name="q4Stonecutter" value="d"> D) A high official</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q4Stonecutter', 'c', 'q4StonecutterFeedback', 'Stonecutter Q4')">Submit</button>
+        <div id="q4StonecutterFeedback" class="feedback"></div>
+    
+        <p>5. What lesson is conveyed through the stonecutters journey?</p>
+        <div>
+            <label><input type="radio" name="q5Stonecutter" value="a"> A) The most powerful people never face any challenges.</label><br>
+            <label><input type="radio" name="q5Stonecutter" value="b"> B) One should always strive for higher status to be truly happy.</label><br>
+            <label><input type="radio" name="q5Stonecutter" value="c"> C) Power is most effectively used when it is gained through force.</label><br>
+            <label><input type="radio" name="q5Stonecutter" value="d"> D) True happiness and power come from accepting and valuing one's own position in life.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q5Stonecutter', 'd', 'q5StonecutterFeedback', 'Stonecutter Q5')">Submit</button>
+        <div id="q5StonecutterFeedback" class="feedback"></div>
+    </div>
+
+<!-- SCORE SUMMARY BUTTON -->
+<div style="margin-top: 30px;">
+    <button class="button" onclick="showFinalScore()">Show Final Score</button>
+    <div id="scoreSummary" class="feedback summary"></div>
+</div>
+
+<!-- JAVASCRIPT FUNCTIONALITY -->
+<script>
+function checkMultipleChoice(questionName, correctAnswer, feedbackId, assessmentLabel) {
+    const options = document.getElementsByName(questionName);
+    let selectedValue = '';
+    let selectedOption = null;
+
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].checked) {
+            selectedValue = options[i].value;
+            selectedOption = options[i];
+            break;
+        }
+    }
+
+    const feedbackElement = document.getElementById(feedbackId);
+    if (!selectedValue) {
+        showFeedback(feedbackElement, '❗ Please select an answer.', 'error');
+        return;
+    }
+
+    // Disable all options after selection
+    options.forEach(opt => opt.disabled = true);
+
+    if (selectedValue === correctAnswer) {
+        showFeedback(feedbackElement, '✅ Correct!', 'success');
+        saveAssessmentResult(assessmentLabel, 1);
+    } else {
+        showFeedback(feedbackElement, `❌ Incorrect. The correct answer was: ${correctAnswer.toUpperCase()}`, 'error');
+        highlightCorrectOption(questionName, correctAnswer);
+        saveAssessmentResult(assessmentLabel, 0);
+    }
+}
+
+function showFeedback(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block';
+    element.style.padding = '10px';
+    element.style.borderRadius = '5px';
+    element.style.transition = 'all 0.3s ease';
+
+    if (type === 'success') {
+        element.style.backgroundColor = '#d4edda';
+        element.style.color = '#155724';
+    } else {
+        element.style.backgroundColor = '#f8d7da';
+        element.style.color = '#721c24';
+    }
+}
+
+function highlightCorrectOption(questionName, correctValue) {
+    const options = document.getElementsByName(questionName);
+    options.forEach(opt => {
+        if (opt.value === correctValue) {
+            opt.parentElement.classList.add('highlight-correct');
+        }
+    });
+}
+
+function saveAssessmentResult(assessment, result) {
+    let results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    results.push({ assessment: assessment, result: result });
+    localStorage.setItem('assessmentResults', JSON.stringify(results));
+}
+
+function showFinalScore() {
+    const results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    const total = results.length;
+    const correct = results.filter(r => r.result === 1).length;
+    const summaryText = total > 0 
+        ? `📊 You answered ${correct} out of ${total} questions correctly.` 
+        : '📝 No questions have been answered yet.';
+    
+    const feedback = document.getElementById('scoreSummary');
+    showFeedback(feedback, summaryText, correct / total >= 0.7 ? 'success' : 'error');
+}
+</script>
+
+</body>
+</html>

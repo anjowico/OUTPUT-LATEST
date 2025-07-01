@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Storybook Style</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: #fff8e1;
+      padding: 40px;
+      line-height: 1.8;
+    }
+
+    .story {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .highlight {
+      background-color: #ffeb3b;
+      padding: 2px 6px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tooltip-box {
+      position: absolute;
+      background: #fff9c4;
+      padding: 10px;
+      border: 1px solid #fbc02d;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      color: #333;
+      z-index: 1000;
+      max-width: 220px;
+    }
+
+    .story img {
+      max-width: 40%;
+      border-radius: 12px;
+      float: right;
+      margin: 10px 0 10px 20px;
+    }
+
+    .clear {
+      clear: both;
+    }
+  </style>
+</head>
+<body>
+
+<div class="story">
+  <h2>Let's Go Visit Thailand!</h2>
+  <p>
+    <img src="1.jpg" alt="Thailand view">
+    Thailand is one country in <span class="highlight" onclick="showDefinition(this, 'A region in Asia including countries like Thailand, Vietnam, and the Philippines.')">Southeast</span> Asia worth visiting if you are a culture-oriented person. Why? There are countless reasons. First, Bangkok, the capital city, is just three and a half hours of flight away.
+  </p>
+
+  <p>
+    The fare is not that much compared to other cities. Very interesting are the various types of statues of Buddha in
+    <span class="highlight" onclick="showDefinition(this, 'A place for worship, especially in Buddhism and Hinduism.')">temples</span>
+    of worship. The floating markets are an awesome sight and place to be if you are to spend your whole day with adventure.
+  </p>
+  <img src="2.jpg" alt="Floating market">
+  <p>
+    A four-day-three-night stay in Bangkok may just be a dream. However, it is its amazing culture that attracts visitors to return again and again.
+  </p>
+  <div class="clear"></div>
+</div>
+
+<script>
+  let currentTooltip = null;
+
+  function showDefinition(element, definition) {
+    // Remove previous tooltip if exists
+    if (currentTooltip) currentTooltip.remove();
+
+    // Create tooltip element
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip-box';
+    tooltip.textContent = definition;
+
+    document.body.appendChild(tooltip);
+
+    // Position near the clicked word
+    const rect = element.getBoundingClientRect();
+    tooltip.style.left = `${rect.left + window.scrollX}px`;
+    tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
+
+    currentTooltip = tooltip;
+
+    // Optional: Hide after 5 seconds
+    setTimeout(() => {
+      if (tooltip) tooltip.remove();
+    }, 5000);
+  }
+
+  // Hide tooltip if clicked outside
+  document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('highlight') && currentTooltip) {
+      currentTooltip.remove();
+    }
+  });
+</script>
+
+</body>
+</html>

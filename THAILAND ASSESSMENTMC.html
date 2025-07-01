@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Quiz - Interactive Assessment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f2f6fc, #e6efff);
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .assessment {
+      margin: 0 auto 40px auto;
+      max-width: 900px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .activity {
+      margin-top: 20px;
+    }
+
+    .question-card {
+      background-color: #fdfdfd;
+      border-left: 6px solid #007bff;
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+
+    .question-card:hover {
+      transform: scale(1.01);
+    }
+
+    .question-card p {
+      font-weight: bold;
+      color: #444;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    .feedback.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .feedback.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .highlight-correct {
+      background-color: #e2f0cb;
+      font-weight: bold;
+    }
+
+    .summary {
+      background-color: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Knowledge Quest</h1>
+  <h2>Choose the best answer. Learn something new every time! 💡</h2>
+
+  <div class="assessment">
+    <div class="activity">
+      <h3>✈️ Let's Go Visit Thailand</h3>
+    
+        <p>1. Why is Bangkok considered a good travel destination for culture-oriented people?</p>
+        <div>
+            <label><input type="radio" name="q1Thailand" value="a"> A) It is famous for its extreme weather conditions.</label><br>
+            <label><input type="radio" name="q1Thailand" value="b"> B) It has many modern shopping malls and high-tech attractions.</label><br>
+            <label><input type="radio" name="q1Thailand" value="c"> C) It is known for its luxury hotels and fine dining experiences.</label><br>
+            <label><input type="radio" name="q1Thailand" value="d"> D) The city is rich in cultural experiences, such as temples and floating markets.</label><br>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q1Thailand', 'd', 'q1ThailandFeedback', 'Thailand Q1')">Submit</button>
+        <div id="q1ThailandFeedback" class="feedback"></div>
+    
+        <p>2. How far is Bangkok from the country mentioned in the story?</p>
+        <div>
+            <label><input type="radio" name="q2Thailand" value="a"> A) a 5-hour flight.</label><br>
+            <label><input type="radio" name="q2Thailand" value="b"> B) a 1-hour flight.</label><br>
+            <label><input type="radio" name="q2Thailand" value="c"> C) a 6-hour flight.</label><br>
+            <label><input type="radio" name="q2Thailand" value="d"> D) a 3.5-hour flight.</label><br>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q2Thailand', 'd', 'q2ThailandFeedback', 'Thailand Q2')">Submit</button>
+        <div id="q2ThailandFeedback" class="feedback"></div>
+    
+        <p>3. According to the passage, why do people often return to Bangkok after visiting?</p>
+        <div>
+            <label><input type="radio" name="q3Thailand" value="a"> A) Because the shopping is unbeatable.</label><br>
+            <label><input type="radio" name="q3Thailand" value="b"> B) Because the weather is always pleasant.</label><br>
+            <label><input type="radio" name="q3Thailand" value="c"> C) Because it is easy to visit multiple countries from there.</label><br>
+            <label><input type="radio" name="q3Thailand" value="d"> D) Because it offers unique cultural experiences that attract visitors repeatedly.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q3Thailand', 'd', 'q3ThailandFeedback', 'Thailand Q3')">Submit</button>
+        <div id="q3ThailandFeedback" class="feedback"></div>
+    
+        <p>4. What type of experiences does Bangkok offer, according to the story?</p>
+        <div>
+            <label><input type="radio" name="q4Thailand" value="a"> A) An adventurous, extreme sports atmosphere.</label><br>
+            <label><input type="radio" name="q4Thailand" value="b"> B) An opportunity to relax on beautiful beaches.</label><br>
+            <label><input type="radio" name="q4Thailand" value="c"> C) A chance to attend world-renowned music festivals.</label><br>
+            <label><input type="radio" name="q4Thailand" value="d"> D) Experiences involving temples, floating markets, and shopping centers.</label>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q4Thailand', 'd', 'q4ThailandFeedback', 'Thailand Q4')">Submit</button>
+        <div id="q4ThailandFeedback" class="feedback"></div>
+    
+        <p>5. What is one reason people may find it easy to travel to Bangkok from nearby countries?</p>
+        <div>
+            <label><input type="radio" name="q5Thailand" value="a"> A) It offers all-inclusive vacation packages.</label><br>
+            <label><input type="radio" name="q5Thailand" value="b"> B) It is a popular stopover between long-haul flights.</label>
+            <label><input type="radio" name="q5Thailand" value="c"> C) The flight duration is short compared to other destinations.</label><br>
+            <label><input type="radio" name="q5Thailand" value="d"> D) Bangkok has cheaper flights than other destinations in Southeast Asia.</label><br>
+        </div>
+        <button class="button" onclick="checkMultipleChoice('q5Thailand', 'c', 'q5ThailandFeedback', 'Thailand Q5')">Submit</button>
+        <div id="q5ThailandFeedback" class="feedback"></div>
+    </div>
+
+<!-- SCORE SUMMARY BUTTON -->
+<div style="margin-top: 30px;">
+    <button class="button" onclick="showFinalScore()">Show Final Score</button>
+    <div id="scoreSummary" class="feedback summary"></div>
+</div>
+
+<!-- JAVASCRIPT FUNCTIONALITY -->
+<script>
+function checkMultipleChoice(questionName, correctAnswer, feedbackId, assessmentLabel) {
+    const options = document.getElementsByName(questionName);
+    let selectedValue = '';
+    let selectedOption = null;
+
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].checked) {
+            selectedValue = options[i].value;
+            selectedOption = options[i];
+            break;
+        }
+    }
+
+    const feedbackElement = document.getElementById(feedbackId);
+    if (!selectedValue) {
+        showFeedback(feedbackElement, '❗ Please select an answer.', 'error');
+        return;
+    }
+
+    // Disable all options after selection
+    options.forEach(opt => opt.disabled = true);
+
+    if (selectedValue === correctAnswer) {
+        showFeedback(feedbackElement, '✅ Correct!', 'success');
+        saveAssessmentResult(assessmentLabel, 1);
+    } else {
+        showFeedback(feedbackElement, `❌ Incorrect. The correct answer was: ${correctAnswer.toUpperCase()}`, 'error');
+        highlightCorrectOption(questionName, correctAnswer);
+        saveAssessmentResult(assessmentLabel, 0);
+    }
+}
+
+function showFeedback(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block';
+    element.style.padding = '10px';
+    element.style.borderRadius = '5px';
+    element.style.transition = 'all 0.3s ease';
+
+    if (type === 'success') {
+        element.style.backgroundColor = '#d4edda';
+        element.style.color = '#155724';
+    } else {
+        element.style.backgroundColor = '#f8d7da';
+        element.style.color = '#721c24';
+    }
+}
+
+function highlightCorrectOption(questionName, correctValue) {
+    const options = document.getElementsByName(questionName);
+    options.forEach(opt => {
+        if (opt.value === correctValue) {
+            opt.parentElement.classList.add('highlight-correct');
+        }
+    });
+}
+
+function saveAssessmentResult(assessment, result) {
+    let results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    results.push({ assessment: assessment, result: result });
+    localStorage.setItem('assessmentResults', JSON.stringify(results));
+}
+
+function showFinalScore() {
+    const results = JSON.parse(localStorage.getItem('assessmentResults')) || [];
+    const total = results.length;
+    const correct = results.filter(r => r.result === 1).length;
+    const summaryText = total > 0 
+        ? `📊 You answered ${correct} out of ${total} questions correctly.` 
+        : '📝 No questions have been answered yet.';
+    
+    const feedback = document.getElementById('scoreSummary');
+    showFeedback(feedback, summaryText, correct / total >= 0.7 ? 'success' : 'error');
+}
+</script>
+
+</body>
+</html>

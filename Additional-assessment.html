@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student - Answer Assessments</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('BG2.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+            padding-top: 20px;
+        }
+
+        /* Header Styles */
+        h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ffffff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Container Styling */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px 0;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .container h2 {
+            margin-bottom: 15px;
+            color: #00796b;
+        }
+
+        /* Card-style Question Box */
+        .question-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        .question-card input,
+        .question-card select,
+        .question-card button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .question-card button {
+            background-color: #00796b;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .question-card button:hover {
+            background-color: #004d40;
+            transform: scale(1.05);
+        }
+
+        .question-card button:active {
+            background-color: #00332f;
+        }
+
+        .question-card button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Feedback Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .feedback.incorrect {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        /* Class Code Section */
+        .classroom-code {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00796b;
+        }
+
+        /* Reset Button */
+        .reset-button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-button:hover {
+            background-color: #ff3d32;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 25px;
+                width: 95%;
+            }
+
+            .question-card input,
+            .question-card button,
+            .question-card select {
+                font-size: 1em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Student - Answer Assessments</h1>
+
+    <div class="container">
+        <form id="classroomCodeForm">
+            <label for="classroomCode">Enter Classroom Code:</label>
+            <input type="text" id="classroomCode" placeholder="Enter Classroom Code" required>
+            <button type="button" onclick="loadAssessments()">Load Assessments</button>
+        </form>
+
+        <div id="feedback" class="feedback"></div>
+
+        <div id="assessmentsContainer"></div>
+    </div>
+
+    <script>
+        let assessments = {};
+        let studentScore = 0;
+        function loadAssessments() {
+    const classroomCode = document.getElementById("classroomCode").value.trim();
+    const feedback = document.getElementById("feedback");
+    const allAssessments = JSON.parse(localStorage.getItem("allAssessments")) || {};
+
+    if (!allAssessments[classroomCode]) {
+        feedback.textContent = "Classroom code not found.";
+        feedback.classList.remove('correct', 'incorrect');
+        feedback.classList.add('incorrect');
+        feedback.style.display = "block";
+        return;
+    }
+
+    // Get the assessments for the entered classroom code
+    assessments = allAssessments[classroomCode];
+
+    // Show feedback
+    feedback.textContent = `Assessments for classroom code: ${classroomCode}`;
+    feedback.classList.remove('correct', 'incorrect');
+    feedback.classList.add('correct');
+    feedback.style.display = "block";
+
+    // Render the assessments on the page
+    renderAssessments(assessments);
+}
+
+
+        function renderAssessments(assessments) {
+            const container = document.getElementById("assessmentsContainer");
+            container.innerHTML = "";
+
+           // Vocabulary
+    container.innerHTML += `
+        <h2>Vocabulary Terms</h2>
+        <div class="question-card">
+            ${assessments.terms.map((term, index) => `
+                <div>
+                    <strong>${term}</strong><br>
+                    <input type="text" id="vocab-${index}" placeholder="Enter your definition">
+                    <button type="button" onclick="checkVocabularyDefinition('${term}', ${index})">Check Definition</button>
+                    <div id="vocab-feedback-${index}" class="feedback"></div>
+                </div>
+            `).join("")}
+        </div>
+    `;
+}
+
+async function checkVocabularyDefinition(term, index) {
+    const userDefinition = document.getElementById(`vocab-${index}`).value.trim();
+    const feedbackDiv = document.getElementById(`vocab-feedback-${index}`);
+
+    // Check definition accuracy using strict match
+    const isAccurate = await checkDefinitionAccuracy(term, userDefinition);
+    if (isAccurate) {
+        feedbackDiv.textContent = "Correct definition!";
+        feedbackDiv.classList.remove('incorrect');
+        feedbackDiv.classList.add('correct');
+        return;
+    }
+
+    // Check for softer definition match
+    const isSoftMatch = await checkDefinitionSoftMatch(term, userDefinition);
+    if (isSoftMatch) {
+        feedbackDiv.textContent = "Definition is close, but could be more accurate.";
+        feedbackDiv.classList.remove('correct');
+        feedbackDiv.classList.add('incorrect');
+        return;
+    }
+
+    feedbackDiv.textContent = "Incorrect definition.";
+    feedbackDiv.classList.remove('correct');
+    feedbackDiv.classList.add('incorrect');
+
+    // Optionally check grammar for the user's definition
+    const grammarIssues = await checkGrammar(userDefinition);
+    if (grammarIssues.length > 0) {
+        feedbackDiv.innerHTML += `<br><strong>Grammar issues detected:</strong><ul>
+            ${grammarIssues.map(issue => `<li>${issue.message}</li>`).join('')}
+        </ul>`;
+    }
+}
+
+            // Jumbled Words
+            container.innerHTML += `
+                <h2>Unscramble Challenge</h2>
+                <div class="question-card">${assessments.jumbledWords.map((item, index) => `
+                    <div>
+                        <strong>Jumbled:</strong> ${item.jumbled} <br>
+                        <input type="text" id="unscrambled-${index}" placeholder="Unscrambled word">
+                    </div>
+                `).join("")}</div>
+            `;
+
+            // Fill-in-the-Blank
+            container.innerHTML += `
+                <h2>Fill-in-the-Blank Questions</h2>
+                <div class="question-card">${assessments.fillInBlankQuestions.map((item, index) => `
+                    <div>
+                        ${item.sentence.replace("__", "<strong>__</strong>")} <br>
+                        <input type="text" id="blank-${index}" placeholder="Your answer">
+                    </div>
+                `).join("")}</div>
+            `;
+
+            // MCQs
+            container.innerHTML += `
+                <h2>Multiple Choice Questions</h2>
+                <div class="question-card">${assessments.mcqQuestions.map((mcq, index) => `
+                    <div>
+                        <strong>${mcq.question}</strong><br>
+                        A: <input type="radio" name="mcq-${index}" value="A"> ${mcq.options.A}<br>
+                        B: <input type="radio" name="mcq-${index}" value="B"> ${mcq.options.B}<br>
+                        C: <input type="radio" name="mcq-${index}" value="C"> ${mcq.options.C}<br>
+                        D: <input type="radio" name="mcq-${index}" value="D"> ${mcq.options.D}<br>
+                    </div>
+                `).join("")}</div>
+            `;
+
+            container.innerHTML += `
+              <button type="button" onclick="checkAnswers()" id="submitBtn" disabled>Submit Answers</button>
+
+            `;
+    
+        function validateAnswers() {
+    let allAnswered = true;
+
+    // Check if all inputs (jumbled, blanks, and MCQs) are filled
+    assessments.jumbledWords.forEach((item, index) => {
+        if (!document.getElementById(`unscrambled-${index}`).value.trim()) {
+            allAnswered = false;
+        }
+    });
+
+    assessments.fillInBlankQuestions.forEach((item, index) => {
+        if (!document.getElementById(`blank-${index}`).value.trim()) {
+            allAnswered = false;
+        }
+    });
+
+    assessments.mcqQuestions.forEach((mcq, index) => {
+        if (!document.querySelector(`input[name="mcq-${index}"]:checked`)) {
+            allAnswered = false;
+        }
+    });
+
+    document.getElementById("submitBtn").disabled = !allAnswered;
+}
+
+        function checkAnswers() {
+    let totalQuestions = 0;
+    studentScore = 0;
+
+    // Jumbled Words
+    assessments.jumbledWords.forEach((item, index) => {
+        const answer = document.getElementById(`unscrambled-${index}`).value.trim().toLowerCase();
+        if (answer === item.original.toLowerCase()) studentScore++;
+        totalQuestions++;
+    });
+
+    // Fill-in-the-Blank
+    assessments.fillInBlankQuestions.forEach((item, index) => {
+        const answer = document.getElementById(`blank-${index}`).value.trim().toLowerCase();
+        if (answer === item.answer.toLowerCase()) studentScore++;
+        totalQuestions++;
+    });
+
+    // MCQs
+    assessments.mcqQuestions.forEach((mcq, index) => {
+        const selected = document.querySelector(`input[name="mcq-${index}"]:checked`);
+        if (selected && selected.value === mcq.correct) studentScore++;
+        totalQuestions++;
+    });
+
+    // Show the score
+    alert(`Your score: ${studentScore}/${totalQuestions}`);
+
+    // Reset the page for new assessment
+    resetPage();
+}
+function resetPage() {
+    // Clear form inputs (classroom code)
+    document.getElementById("classroomCodeForm").reset();
+
+    // Hide feedback
+    document.getElementById("feedback").style.display = "none";
+
+    // Clear the assessments container
+    document.getElementById("assessmentsContainer").innerHTML = "";
+
+    // Reset assessments and score
+    assessments = {};
+    studentScore = 0;
+}
+
+    </script>
+
+</body>
+</html>

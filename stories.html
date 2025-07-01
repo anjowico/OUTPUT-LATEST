@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Stories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fb 0%, #e0e4e8 100%);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #444;
+            letter-spacing: 0.5px;
+        }
+        .stories-container {
+  display: flex;               /* Use flexbox for natural wrapping */
+  flex-wrap: wrap;
+  justify-content: center;     /* Center stories in the row */
+  gap: 40px;                   /* Bigger gap for breathing room */
+  padding: 40px 20px;
+  max-width: 1200px;           /* Set a comfortable max width */
+  margin: 0 auto;              /* Center container */
+}
+body {
+  background: #f9f4e7; /* Light parchment color */
+}
+.story {
+  flex: 0 1 600px;             /* Each story takes about 600px width, but can shrink a bit */
+  background: #fffaf0; /* Slightly off-white paper-like */
+  border: 1px solid #e3dccc;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 40px 50px;          /* Spacious padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Georgia', serif; /* A serif font for storybook vibe */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  transition: transform 0.3s ease;
+}
+
+.story:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+        .story-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .story-author {
+            font-size: 15px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .story-content {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .story-content p {
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 30px;
+            display: block;
+            width: 200px;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background-color: #45a049;
+        }
+
+        .story-image, .story-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 5px;
+            position: relative;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 5px;
+            padding: 8px;
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .highlight:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Subtle Background Pattern */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        .story-tts-controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.tts-play-btn, .tts-pause-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tts-play-btn:hover, .tts-pause-btn:hover {
+    background-color: #1976D2;
+}
+.tts-stop-btn {
+    background-color: #f44336;
+}
+
+.tts-stop-btn:hover {
+    background-color: #d32f2f;
+}
+
+
+#voiceSelect {
+    font-size: 14px;
+    padding: 6px;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+
+        /* Mobile Design */
+        @media (max-width: 600px) {
+            .stories-container {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+            }
+            .back-btn {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>All Saved Stories</h1>
+    <button onclick="processText()">Highlight Difficult Words</button>
+
+    <div class="stories-container" id="stories-container">
+        <!-- Saved stories will appear here -->
+    </div>
+    
+    <div id="definitionBox" style="
+  position: absolute;
+  background: #fff8dc;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+  max-width: 300px;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+"></div>
+<div style="margin-top: 30px;">
+    <label for="voiceSelect">Choose Voice:</label>
+    <select id="voiceSelect">
+      <option disabled selected>Loading voices...</option>
+    </select>
+  </div>
+  <button class="fancy-button" onclick="processText()">Highlight Difficult Words</button>
+  <button class="fancy-button" onclick="window.location.href='dictionary.html'">📓Go to Dictionary</button>
+  <button class="fancy-button" onclick="window.location.href='Additional-assessment.html'">Go To Additional Assessment</button>
+  <button class="fancy-button back-btn" onclick="window.location.href='classroom.html'">Back to Classroom</button>
+  
+
+    <script>
+        const commonWords = new Set([
+            "the", "is", "in", "and", "to", "with", "a", "of", "for", "on", "that",
+    "it", "as", "at", "by", "an", "be", "this", "from", "or", "are", "was",
+    "but", "not", "have", "had", "he", "she", "they", "we", "you", "i", "his", "her", "their",
+    "will", "would", "can", "could", "do", "does", "did", "been", "were", "them", "so", "if", "there"
+    , "attitude", "challenge", "climate", "decision", "energy", "government", "opinion", "problem", "solution",
+"culture", "experience", "journey", "leader", "moment", "nature", "opportunity", "pattern", "reason", "technology",
+"choice", "community", "conversation", "courage", "direction", "effect", "fact", "future", "goal", "growth",
+"history", "idea", "information", "issue", "language", "law", "lesson", "method", "mind", "movement",
+"name", "object", "plan", "question", "resource", "result", "rule", "science", "subject", "voice",
+"area", "benefit", "cause", "class", "conflict", "date", "detail", "difference", "event", "example",
+"family", "friend", "group", "hero", "home", "hour", "human", "interest", "job", "level",
+"location", "material", "news", "note", "number", "order", "pain", "parent", "part", "place",
+"power", "purpose", "record", "report", "rest", "role", "score", "side", "skill", "story",
+"task", "team", "term", "thing", "time", "tool", "topic", "truth", "value", "view"
+, "compare", "describe", "explain", "imagine", "improve", "include", "organize", "predict", "support",
+"create", "develop", "evaluate", "identify", "observe", "participate", "recognize", "summarize", "understand", "visualize",
+"accept", "argue", "arrive", "avoid", "begin", "believe", "build", "change", "choose", "communicate",
+"decide", "discover", "enjoy", "explore", "express", "follow", "increase", "introduce", "learn", "listen",
+"measure", "notice", "plan", "prepare", "question", "remember", "share", "show", "solve", "study",
+"act", "add", "admit", "allow", "apply", "attack", "belong", "bring", "call", "care",
+"check", "climb", "complete", "connect", "contain", "continue", "control", "cost", "count", "cover",
+"design", "discuss", "divide", "dream", "drop", "face", "fail", "fill", "find", "fit",
+"fly", "guess", "handle", "help", "hold", "hope", "jump", "keep", "laugh", "leave",
+"live", "look", "love", "miss", "move", "need", "open", "pass", "play", "reach"
+, "basic", "clever", "difficult", "eager", "friendly", "honest", "important", "modern", "typical",
+"brave", "calm", "dangerous", "efficient", "famous", "generous", "helpful", "polite", "serious", "unique",
+"amazing", "awkward", "boring", "careful", "confident", "curious", "different", "early", "fair", "fast",
+"gentle", "grateful", "happy", "interesting", "kind", "lazy", "loyal", "neat", "nice", "patient",
+"perfect", "poor", "quiet", "rare", "safe", "shy", "slow", "strong", "tough", "wise",
+"angry", "average", "beautiful", "bitter", "bored", "bright", "chilly", "clean", "colorful", "cool",
+"crowded", "cruel", "deep", "dirty", "dry", "dull", "easy", "empty", "exact", "excited",
+"fancy", "fine", "fresh", "funny", "gentle", "glad", "great", "hard", "healthy", "heavy",
+"huge", "hungry", "kind", "large", "late", "light", "lucky", "narrow", "new", "nice",
+"odd", "plain", "quiet", "rich", "sharp", "short", "sick", "smart", "soft", "tall"
+, "carefully", "easily", "finally", "often", "quickly", "really", "simply", "suddenly", "usually",
+"barely", "brightly", "clearly", "daily", "exactly", "gently", "honestly", "loudly", "mostly", "silently",
+"already", "anxiously", "badly", "bravely", "cheerfully", "closely", "correctly", "deeply", "early", "evenly",
+"fast", "frequently", "gladly", "gracefully", "happily", "hopefully", "just", "kindly", "lightly", "neatly",
+"never", "openly", "politely", "quietly", "rarely", "soon", "suddenly", "tightly", "truly", "widely",
+"abruptly", "angrily", "anywhere", "aside", "automatically", "boldly", "calmly", "cheerfully", "constantly", "courageously",
+"definitely", "deliberately", "downstairs", "eagerly", "eventually", "everywhere", "exactly", "fairly", "faithfully", "far",
+"fortunately", "frankly", "generally", "gently", "greatly", "hardly", "honorably", "immediately", "innocently", "inwardly",
+"jealously", "jokingly", "keenly", "lately", "loyally", "merrily", "naturally", "openly", "partly", "perfectly",
+"promptly", "recently", "regularly", "safely", "sincerely", "slowly", "softly", "straight", "together", "upstairs"
+, "because", "however", "meanwhile", "therefore", "unless", "until", "when", "while", "yet",
+"afterward", "besides", "consequently", "furthermore", "hence", "in addition", "likewise", "nevertheless", "otherwise", "since",
+"also", "before", "even though", "for example", "in conclusion", "in fact", "in other words", "instead", "moreover", "namely",
+"next", "nonetheless", "now", "on the other hand", "once", "overall", "similarly", "still", "such as", "then",
+"though", "thus", "to begin with", "to summarize", "ultimately", "whereas", "yet", "as a result", "in contrast", "as long as",
+"accordingly", "after all", "as if", "as soon as", "at the same time", "by contrast", "by the time", "despite", "even if", "eventually",
+"for instance", "in case", "in short", "just as", "just like", "like", "neither", "no matter", "not only", "now that",
+"on the contrary", "once again", "only if", "provided that", "regardless", "simultaneously", "so that", "such that", "that is", "though",
+"to clarify", "to illustrate", "to put it another way", "to sum up", "unless", "until now", "what's more", "whereas", "whether", "without"
+
+        ]);
+
+        // Cache definitions to avoid unnecessary repeated API calls
+        const definitionCache = {};
+
+        async function fetchDefinition(word) {
+  if (definitionCache[word]) return definitionCache[word];
+
+  try {
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    if (!response.ok) throw new Error("Not found");
+    const data = await response.json();
+    const definition = data[0]?.meanings?.[0]?.definitions?.[0]?.definition || "Definition not available.";
+    const pronunciation = data[0]?.phonetics?.[0]?.text || "";
+    const audio = data[0]?.phonetics?.[0]?.audio || "";
+    definitionCache[word] = { definition, pronunciation, audio };
+    return definitionCache[word];
+  } catch (e) {
+    return { definition: "Definition not found.", pronunciation: "", audio: "" };
+  }
+}
+
+
+async function highlightDifficultWords(text) {
+  const words = text.split(/\b/); // keeps punctuation
+  const highlightedWords = await Promise.all(words.map(async (word) => {
+    const clean = word.toLowerCase().replace(/[.,!?;:()]/g, "");
+    if (clean && !commonWords.has(clean) && /^[a-zA-Z]+$/.test(clean)) {
+      return `<span class="highlight" data-word="${clean}">${word}</span>`;
+    }
+    return word;
+  }));
+
+  return highlightedWords.join("");
+}
+
+        function processText() {
+  const storiesContainer = document.getElementById("stories-container");
+  const stories = storiesContainer.getElementsByClassName("story");
+
+  Array.from(stories).forEach(async (story) => {
+    const storyContentElement = story.querySelector(".story-content");
+    if (storyContentElement) {
+      const originalContent = storyContentElement.textContent;
+      const highlightedContent = await highlightDifficultWords(originalContent);
+      storyContentElement.innerHTML = highlightedContent;
+    }
+  });
+}
+
+const definitionBox = document.getElementById("definitionBox");
+
+document.body.addEventListener("click", async function (e) {
+  if (e.target.classList.contains("highlight")) {
+    const word = e.target.getAttribute("data-word");
+    definitionBox.textContent = `Looking up "${word}"...`;
+    definitionBox.style.display = "block";
+    definitionBox.style.top = e.pageY + 10 + "px";
+    definitionBox.style.left = e.pageX + 10 + "px";
+
+    const { definition, pronunciation, audio } = await fetchDefinition(word);
+    definitionBox.innerHTML = `<strong>${word}</strong>: ${definition}`;
+    if (pronunciation) {
+      definitionBox.innerHTML += `<div class="pronunciation">Pronunciation: ${pronunciation}</div>`;
+    }
+    if (audio) {
+      definitionBox.innerHTML += `<div><audio controls src="${audio}"></audio></div>`;
+    }
+  } else {
+    definitionBox.style.display = "none";
+  }
+});
+
+
+        function loadStories() {
+            const stories = JSON.parse(localStorage.getItem('stories')) || [];
+            const storiesContainer = document.getElementById('stories-container');
+
+            if (stories.length === 0) {
+                storiesContainer.innerHTML = '<p>No stories saved yet.</p>';
+            } else {
+                stories.forEach((story) => {
+                    const storyDiv = document.createElement('div');
+                    storyDiv.classList.add('story');
+
+                    storyDiv.innerHTML = `
+                        <h3 class="story-title">${story.title}</h3>
+                        <p class="story-author"><strong>Author:</strong> ${story.author}</p>
+                        <div class="story-content"><span class="story-preview">${story.content.substring(0, 150)}...</span></div>
+                        <button class="read-more-btn">Read More</button>
+                    `;
+
+                    // Display image
+                    if (story.image && story.image.startsWith('data:image')) {
+                        storyDiv.innerHTML += `<img src="${story.image}" alt="Story Image" class="story-image" />`;
+                    }
+
+                    // Display video
+                    if (story.video && story.video.startsWith('data:video')) {
+                        storyDiv.innerHTML += `<video controls class="story-video"><source src="${story.video}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                    }
+
+                    storiesContainer.appendChild(storyDiv);
+
+                    // Handle "Read More" button
+                    const readMoreBtn = storyDiv.querySelector('.read-more-btn');
+                    readMoreBtn.addEventListener('click', () => {
+                        storyDiv.innerHTML += `
+  <div class="story-tts-controls">
+    <button class="tts-play-btn">🔊 Play</button>
+    <button class="tts-pause-btn" style="display: none;">⏸ Pause</button>
+    <button class="tts-stop-btn" style="display: none;">⏹ Stop</button>
+  </div>
+`;
+                        const preview = storyDiv.querySelector('.story-preview');
+                        if (readMoreBtn.textContent === 'Read More') {
+                            preview.innerHTML = story.content;
+                            readMoreBtn.textContent = 'Read Less';
+                        } else {
+                            preview.innerHTML = story.content.substring(0, 150) + '...';
+                            readMoreBtn.textContent = 'Read More';
+                        }
+                    });
+                });
+            }
+        }
+       
+
+        window.onload = loadStories;  // Load stories on page load
+        let currentUtterance = null;
+let isPaused = false;
+let voices = [];
+let selectedVoice = null;
+
+// Load available English (US/UK) voices into the selector
+function loadVoices() {
+    voices = speechSynthesis.getVoices();
+
+    const voiceSelect = document.getElementById("voiceSelect");
+    voiceSelect.innerHTML = ""; // Clear existing options
+
+    const englishVoices = voices.filter(v =>
+        v.lang.startsWith("en-") && (v.name.includes("UK") || v.name.includes("US") || v.name.includes("English"))
+    );
+
+    englishVoices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = voice.name;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        if (voice.default) {
+            option.textContent += " — Default";
+            option.selected = true;
+            selectedVoice = voice;
+        }
+        voiceSelect.appendChild(option);
+    });
+
+    if (!selectedVoice && englishVoices.length > 0) {
+        selectedVoice = englishVoices[0];
+        voiceSelect.selectedIndex = 0;
+    }
+}
+
+if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+}
+
+document.getElementById("voiceSelect").addEventListener("change", function () {
+    const selectedName = this.value;
+    selectedVoice = voices.find(v => v.name === selectedName);
+});
+
+// Text-to-Speech playback
+function speakText(text) {
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel(); 
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        console.log('Using voice:', selectedVoice.name, selectedVoice.lang);
+    } else {
+        console.warn('No voice selected!');
+    }
+
+    utterance.onstart = () => console.log('Speech started');
+    utterance.onend = () => console.log('Speech ended');
+    utterance.onerror = (e) => console.error('Speech error:', e.error);
+
+    currentUtterance = utterance;
+    speechSynthesis.speak(utterance);
+}
+
+document.addEventListener('click', function (e) {
+    const isPlay = e.target.classList.contains('tts-play-btn');
+    const isPause = e.target.classList.contains('tts-pause-btn');
+    const isStop = e.target.classList.contains('tts-stop-btn');
+
+    if (isPlay) {
+        const storyDiv = e.target.closest('.story');
+        const content = storyDiv.querySelector('.story-preview')?.textContent || '';
+        speakText(content);
+
+        e.target.style.display = 'none';
+        const pauseBtn = storyDiv.querySelector('.tts-pause-btn');
+        const stopBtn = storyDiv.querySelector('.tts-stop-btn');
+        pauseBtn.style.display = 'inline-block';
+        stopBtn.style.display = 'inline-block';
+        pauseBtn.textContent = '⏸ Pause';
+
+    } else if (isPause) {
+        const storyDiv = e.target.closest('.story');
+        if (speechSynthesis.speaking) {
+            if (!isPaused) {
+                speechSynthesis.pause();
+                isPaused = true;
+                e.target.textContent = '▶ Resume';
+            } else {
+                speechSynthesis.resume();
+                isPaused = false;
+                e.target.textContent = '⏸ Pause';
+            }
+        }
+
+    } else if (isStop) {
+        speechSynthesis.cancel();
+        isPaused = false;
+
+        const storyDiv = e.target.closest('.story');
+        storyDiv.querySelector('.tts-play-btn').style.display = 'inline-block';
+        storyDiv.querySelector('.tts-pause-btn').style.display = 'none';
+        storyDiv.querySelector('.tts-stop-btn').style.display = 'none';
+    }
+});
+
+
+window.addEventListener('beforeunload', () => {
+    speechSynthesis.cancel();
+});
+
+    </script>
+
+</body>
+</html>

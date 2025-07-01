@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Story Reader</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, serif;
+      display: flex;
+      min-height: 100vh;
+      background: #fff8f0;
+      color: #333;
+    }
+    .sidebar {
+      width: 250px;
+      background: #6b4e71;
+      color: white;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .story-list {
+      list-style: none;
+      padding: 0;
+    }
+    .story-list li {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #845d84;
+    }
+    .story-list li:hover {
+      background-color: #845d84;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 40px 20px;
+      max-width: 800px;
+      width: 100%;
+    }
+    .progress-container {
+      position: fixed;
+      top: 0;
+      left: 250px;
+      width: calc(100% - 250px);
+      height: 8px;
+      background: #ddd;
+      z-index: 1000;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #6b4e71;
+      transition: width 0.2s ease;
+    }
+    header {
+      margin-bottom: 20px;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 50px;
+    }
+    .fade-img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px 0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+
+    .fade-img.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .highlight {
+      background-color: yellow;
+      cursor: pointer;
+      padding: 0 4px;
+      border-radius: 2px;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: #fff;
+      color: #333;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 2000;
+      max-width: 250px;
+    }
+
+    /* TTS reading paused style */
+    .tts-paused #ttsProgressBar {
+      background: #bbb;
+    }
+    video {
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>📚 Story Library</h2>
+    <ul class="story-list" id="storyList"></ul>
+  </div>
+
+  <div class="main-content">
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <header>
+      <h1 id="storyTitle">STORY PAGE</h1>
+      <div style="margin: 10px 0;">
+        <label for="voiceSelect">🗣️ Voice:</label>
+        <select id="voiceSelect"></select>
+      </div>
+
+      <button onclick="readStory()">🔊 Read Story</button>
+      <button onclick="pauseSpeech()">⏸️ Pause</button>
+      <button onclick="resumeSpeech()">▶️ Resume</button>
+      <button class="simple-btn" onclick="window.location.href='dictionary.html'">📓Go to Dictionary</button>
+
+      <div style="margin-top: 20px;">
+        <label for="ttsProgress">📖 Reading Progress</label>
+        <div style="background: #ddd; height: 10px; width: 100%; border-radius: 5px; overflow: hidden;">
+          <div id="ttsProgressBar" style="background: #6b4e71; height: 100%; width: 0%;"></div>
+        </div>
+      </div>
+    </header>
+
+    <div id="story">
+      <p>Choose a story to read.</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Sample story data
+    const stories = {
+      "Let's Go Visit Thailand!": ` <img src="1.jpg" class="fade-img" alt="Thailand" loading="lazy"> 
+       <video controls width="100%">
+    <source src="Lets-go-visit-thailand.mp4" type="video/mp4">
+  </video>
+  Thailand is one country in Southeast Asia worth visiting if you are a culture-oriented person. Why? There are countless reasons but try considering some. First, Bangkok, the capital city, is just three and a half hours of flight away from our country. <img src="2.jpg" class="fade-img" alt="Thailand" loading="lazy">The fare is not that much compared to other nearby cities or countries like <span class="highlight" onclick="showDefinition('Southeast', event)">Southeast</span> Asia.<img src="3.jpg" class="fade-img" alt="Thailand" loading="lazy"> Second, there are lots of sights, sounds, smells, and tastes to experience. Very interesting are the various types of statues of Buddha in <span class="highlight" onclick="showDefinition('temples', event)">temples</span> of worship. The floating markets are an awesome sight and place to be if you are to spend your whole day with adventure and do are the shopping centers.<img src="4.jpg" class="fade-img" alt="Thailand" loading="lazy"> A four-day-three-night stay in Bangkok, Thailand may just be a dream, much like in our country. However, it is its amazing culture that attracts you to always return for the second time, third time, and so on.`,
+      
+      "The Stonecutter": `<img src="5.jpg" class="fade-img" alt="Thailand" loading="lazy"> 
+      <video controls width="100%">
+    <source src="stonecutter.mp4" type="video/mp4">
+  </video>There was once a <span class="highlight" onclick="showDefinition('stonecutter', event)">stonecutter</span> who was dissatisfied with himself and with his position in life.<img src="6.jpg" class="fade-img" alt="Thailand" loading="lazy"> One day, he passed a wealthy merchant's house and through the open gateway saw many fine possessions and important visitors. "How powerful that merchant must be?" thought the stonecutter. He became very envious, and wished that he would no longer have to live the life of mere stonecutter. To his great surprise, he suddenly became the merchant, enjoying more luxuries and power than he had ever dreamed of, envied and detested by those less wealthy than himself. But soon a high official passed by, carried in a sedan chair, accompanied by attendants, and escorted by soldiers beating gongs. Everyone, no matter how wealthy, had to bow low before the procession. "How powerful that official is!" he thought. "I wish that I could be a high official!" 
+                    Then he became high official, carried everywhere in his embroidered sedan chair, feared and hated by the people all around, who had to bow down before him as he passed. It was a hot summer day, and the official felt very uncomfortable in the sticky sedan chair. He looked up at the sun. It shone proudly in the sky, unaffected by his presence. "How powerful the sun is!" he thought. <img src="7.jpg" class="fade-img" alt="Thailand" loading="lazy">"I wish I could be the sun!"`,
+     
+                    "Adopting a Pet from the Pound": `<img src="8.jpg" class="fade-img" alt="Thailand" loading="lazy"> 
+                    <video controls width="100%">
+    <source src="Adoptingapetfrompound.mp4" type="video/mp4">
+  </video>
+  Owning a pet from the pound or Animal Rescue League has many advantages. First of all, a child feels good about rescuing an abandoned or abused animal and giving it a whole new life. <img src="9.jpg" class="fade-img" alt="Thailand" loading="lazy">Besides, if the animals from the pound aren't adopted right away, they might be put to sleep. Having a pet also means lots of responsibilities. A child has to feed, clean up after, brush, and exercise the pet. Another great advantage of having a pet from the pound is the price of these cute and cuddly animals. Pets from the pound cost a lot less than pets at a fancy pet store, which can cost hundreds of dollars.
+                    <img src="10.jpg" class="fade-img" alt="Thailand" loading="lazy">Once you adopt a pet from the Animal Rescue League, it will quickly become a part of your family. If you are thinking of adopting a pet, you might consider choosing a <span class="highlight" onclick="showDefinition('dog', event)">dog</span> or a <span class="highlight" onclick="showDefinition('cat', event)">cat</span>. Dogs and cats can bring lots of happy times to a family, and they can be excellent companions for a person who lives alone or someone who has lost a loved one. Dogs are also a wonderful source of protection. Cats are funny, and they may help to calm people down when they are sad or mad.`
+    };
+
+    // Definitions for tooltip words
+    const definitions = {
+      "Southeast": "Southeast Asia refers to countries like Thailand, Vietnam, Malaysia, and others.",
+      "temples": "Buildings devoted to religious or spiritual activities, often places of worship.",
+      "stonecutter": "A person who cuts, shapes, and carves stone for building or sculpting.",
+      "dog": "A loyal domesticated mammal commonly kept as a pet.",
+      "cat": "A small domesticated mammal known for independence and agility."
+    };
+
+    const storyList = document.getElementById('storyList');
+    const storyContainer = document.getElementById('story');
+    const storyTitle = document.getElementById('storyTitle');
+    const progressBar = document.getElementById('progressBar');
+    const ttsProgressBar = document.getElementById('ttsProgressBar');
+
+    // Reset all progress and completion on page load
+    window.addEventListener('load', () => {
+      localStorage.removeItem('completedStories');
+      localStorage.removeItem('storyScroll');
+      localStorage.removeItem('currentStory');
+
+      completedStories = {};
+      updateSidebarMarks();
+      loadFirstStory();
+      animateImagesOnScroll();
+      populateVoiceList();
+
+      // Show assessment option if all done (should be none at start)
+      checkAllCompleted();
+    });
+
+    // Variables to track completed stories
+    let completedStories = {};
+
+    // Load first story automatically after reset
+    function loadFirstStory() {
+      const firstStoryTitle = Object.keys(stories)[0];
+      loadStory(firstStoryTitle);
+      window.scrollTo(0,0);
+    }
+
+    // Mark story as completed
+    function markStoryAsCompleted(title) {
+  completedStories[title] = true;
+  localStorage.setItem('completedStories', JSON.stringify(completedStories));
+  updateSidebarMarks();
+  addAssessmentLinkToSidebar(title); // ✅ Add this line
+}
+function addAssessmentLinkToSidebar(title) {
+  const existing = document.querySelector(`[data-assessment-for="${title}"]`);
+  if (existing) return; // Avoid duplicates
+
+  const fileSafe = title.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '');
+  const li = document.createElement('li');
+  li.textContent = '➡️ Assessment';
+  li.style.paddingLeft = '20px';
+  li.style.fontSize = '90%';
+  li.style.color = '#ffd'; // optional: make it look different
+  li.dataset.assessmentFor = title;
+  li.onclick = () => {
+    window.location.href = `assessment-${fileSafe}.html`;
+  };
+
+  // Insert under the corresponding story
+  const storyItems = Array.from(storyList.querySelectorAll('li'));
+  const parentStory = storyItems.find(li => li.dataset.title === title);
+  if (parentStory && parentStory.nextSibling) {
+    storyList.insertBefore(li, parentStory.nextSibling);
+  } else {
+    storyList.appendChild(li);
+  }
+}
+
+function showAssessmentButtonFor(title) {
+  // Remove any existing one first
+  const existingBtn = document.getElementById('storyAssessmentBtn');
+  if (existingBtn) existingBtn.remove();
+
+  const button = document.createElement('button');
+  button.id = 'storyAssessmentBtn';
+  button.textContent = `➡️ Go to ${title} Assessment`;
+
+  // Generate URL-safe filename: assessment-the-stonecutter.html
+  const fileSafe = title.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '');
+  button.onclick = () => {
+    window.location.href = `assessment-${fileSafe}.html`;
+  };
+
+  // Insert after the story content
+  storyContainer.appendChild(button);
+}
+
+    // Show assessment link in sidebar
+    function showAssessmentOption() {
+      const assessmentId = 'assessmentLink';
+      if (!document.getElementById(assessmentId)) {
+        const li = document.createElement('li');
+        li.id = assessmentId;
+        li.textContent = '➡️ Go to Assessment';
+        li.style.fontWeight = 'bold';
+        li.style.cursor = 'pointer';
+        li.onclick = () => {
+          window.location.href = 'assessment-page copy.html';
+        };
+        storyList.appendChild(li);
+      }
+    }
+
+    // Remove assessment link if it exists
+    function removeAssessmentOption() {
+      const assessment = document.getElementById('assessmentLink');
+      if (assessment) {
+        assessment.remove();
+      }
+    }
+
+    // Load a story by title
+    function loadStory(title) {
+      storyTitle.textContent = title;
+      // Replace newlines with paragraph breaks, keep HTML tags inside content intact
+      storyContainer.innerHTML = stories[title];
+      localStorage.setItem('currentStory', title);
+      hideAssessmentButton();
+      updateTTSProgress(0);
+      animateImagesOnScroll();
+      restoreScrollForStory(title);
+      updateSidebarMarks();
+    }
+
+    // Update sidebar marks to show checkmarks for completed stories
+    function updateSidebarMarks() {
+      const items = document.querySelectorAll('#storyList li');
+      items.forEach(li => {
+        const title = li.dataset.title;
+        if (title) {
+          li.textContent = completedStories[title] ? `✅ ${title}` : title;
+        }
+      });
+    }
+
+    // Populate sidebar with story titles
+    function populateStoryList() {
+      storyList.innerHTML = ''; // Clear first
+      for (const title in stories) {
+        const li = document.createElement('li');
+        li.dataset.title = title;
+        li.textContent = completedStories[title] ? `✅ ${title}` : title;
+        li.onclick = () => {
+          loadStory(title);
+          window.scrollTo(0, 0);
+        };
+        storyList.appendChild(li);
+      }
+    }
+    populateStoryList();
+
+    // Scroll progress bar for page scrolling
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (docHeight > 0) ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = scrollPercent + '%';
+      localStorage.setItem('storyScroll', scrollTop);
+    });
+
+    // Restore scroll position on load
+    function restoreScrollForStory(title) {
+      const savedScroll = localStorage.getItem('storyScroll');
+      if (savedScroll) window.scrollTo(0, parseInt(savedScroll));
+    }
+
+    // Tooltip showing definitions + TTS (separate from main TTS)
+    function showDefinition(word, event) {
+      // Remove existing tooltip if any
+      const oldTooltip = document.querySelector('.tooltip');
+      if (oldTooltip) oldTooltip.remove();
+
+      const definition = definitions[word] || "Definition not found.";
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = definition;
+      document.body.appendChild(tooltip);
+
+      // Position tooltip near mouse cursor
+      const x = event.pageX + 10;
+      const y = event.pageY + 10;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+
+      // Speak definition with separate TTS (no progress bar update)
+      speakTooltipText(definition);
+
+      // Remove tooltip after 5 seconds
+      setTimeout(() => {
+        tooltip.remove();
+      }, 5000);
+    }
+
+    // Animate images on scroll with fade-in
+    function animateImagesOnScroll() {
+      const images = document.querySelectorAll('.fade-img');
+      const triggerPoint = window.innerHeight * 0.9;
+
+      images.forEach(img => {
+        const imgTop = img.getBoundingClientRect().top;
+        if (imgTop < triggerPoint) {
+          img.classList.add('visible');
+        }
+      });
+    }
+    window.addEventListener('scroll', animateImagesOnScroll);
+
+    // Text-to-speech for stories with progress
+    let currentUtterance = null;
+    let voices = [];
+    let ttsWordCount = 0;
+    let wordsSpoken = 0;
+
+    // Read the currently loaded story text
+    function readStory() {
+      if (currentUtterance) {
+        // If already speaking, cancel first
+        speechSynthesis.cancel();
+      }
+      const storyText = storyContainer.textContent.trim();
+      hideAssessmentButton();
+      speakStoryText(storyText);
+    }
+
+    // Pause TTS
+    function pauseSpeech() {
+      if (speechSynthesis.speaking && !speechSynthesis.paused) {
+        speechSynthesis.pause();
+        document.body.classList.add('tts-paused');
+      }
+    }
+
+    // Resume TTS
+    function resumeSpeech() {
+      if (speechSynthesis.paused) {
+        speechSynthesis.resume();
+        document.body.classList.remove('tts-paused');
+      }
+    }
+
+    // Populate voices dropdown
+    function populateVoiceList() {
+      voices = speechSynthesis.getVoices();
+      const voiceSelect = document.getElementById('voiceSelect');
+      voiceSelect.innerHTML = '';
+
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.value = i;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    if ('speechSynthesis' in window) {
+      populateVoiceList();
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    // Speak story text with progress update
+    function speakStoryText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert("Text-to-speech is not supported in this browser.");
+        return;
+      }
+
+      speechSynthesis.cancel();
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = 1;
+      currentUtterance.pitch = 1;
+
+      const selectedVoiceIndex = document.getElementById('voiceSelect').value;
+      if (voices[selectedVoiceIndex]) {
+        currentUtterance.voice = voices[selectedVoiceIndex];
+      }
+
+      const words = text.trim().split(/\s+/);
+      ttsWordCount = words.length;
+      wordsSpoken = 0;
+      updateTTSProgress(0);
+
+      currentUtterance.onboundary = function(event) {
+        if (event.name === 'word') {
+          wordsSpoken++;
+          const percent = Math.min(100, (wordsSpoken / ttsWordCount) * 100);
+          updateTTSProgress(percent);
+        }
+      };
+
+      currentUtterance.onend = function() {
+        updateTTSProgress(100);
+        markStoryAsCompleted(storyTitle.textContent);
+        document.body.classList.remove('tts-paused');
+      };
+
+      speechSynthesis.speak(currentUtterance);
+    }
+
+    // Speak tooltip definitions separately, no progress bar
+    function speakTooltipText(text) {
+      if (!('speechSynthesis' in window)) return;
+
+      // Cancel any ongoing tooltip speech, but do NOT interfere with story speech progress
+      speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+
+      const selectedVoiceIndex = document.getElementById('voiceSelect').value;
+      if (voices[selectedVoiceIndex]) {
+        utterance.voice = voices[selectedVoiceIndex];
+      }
+
+      // Just speak it, no progress update or completion marking
+      speechSynthesis.speak(utterance);
+    }
+
+    // Update the TTS progress bar width
+    function updateTTSProgress(percent) {
+      ttsProgressBar.style.width = percent + '%';
+    }
+
+    // Hide assessment button placeholder (if needed)
+    function hideAssessmentButton() {
+      // Currently not used because assessment is a sidebar item
+    }
+
+    // Reset progress and completions and reload first story
+    function resetProgress() {
+      speechSynthesis.cancel();
+      localStorage.removeItem('completedStories');
+      localStorage.removeItem('storyScroll');
+      localStorage.removeItem('currentStory');
+      completedStories = {};
+      updateSidebarMarks();
+      removeAssessmentOption();
+      loadFirstStory();
+      updateTTSProgress(0);
+      progressBar.style.width = '0%';
+    }
+  </script>
+
+</body>
+</html>
